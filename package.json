@@ -1,0 +1,23 @@
+{
+  "name": "broccoli-jst",
+  "description": "Generic template filter for Broccoli",
+  "version": "0.1.0",
+  "author": "Sukjoon Kim <sjoonk@gmail.com>",
+  "main": "index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sjoonk/broccoli-jst"
+  },
+  "keywords": [
+    "broccoli-plugin",
+    "template",
+    "javascript",
+    "jst"
+  ],
+  "dependencies": {
+    "broccoli-filter": "^0.1.6",
+    "js-string-escape": "^1.0.0",
+    "lodash": "^2.4.1"
+  }
+}
