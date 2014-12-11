@@ -5,8 +5,8 @@ var _ = require('lodash');
 
 DEFAULTS = {
     extensions: ['jst'],  
-    namespace: 'JST'
-    // templateDir: 'templates'
+    namespace: 'JST',
+    templatesRoot: 'templates'
 };
 
 module.exports = JSTFilter;
@@ -23,13 +23,15 @@ function JSTFilter(inputTree, options) {
   this.options = options || {};
   this.extensions = options.extensions || DEFAULTS.extensions;
   this.namespace = options.namespace || DEFAULTS.namespace;
+  this.templatesRoot = options.templatesRoot || DEFAULTS.templatesRoot;
   // this.compileFunction = options.compileFunction || '';
 }
 
 JSTFilter.prototype.processString = function(string, relativePath) {
     var extensionRegex = /\.[0-9a-z]+$/i;
-    // var filename = relativePath.toString().split('templates' + path.sep).reverse()[0].replace(extensionRegex, '');
-    var filename = relativePath.replace(extensionRegex, '');
+    // var filename = relativePath.replace(extensionRegex, '');
+    var templateDir = path.normalize(this.templatesRoot + path.sep); 
+    var filename = relativePath.split(templateDir).reverse()[0].replace(extensionRegex, '');
     var compiled = _.template(string);
 
     return this.namespace + "['" + filename + "'] = " + compiled.source + ";\n";

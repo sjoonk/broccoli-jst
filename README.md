@@ -15,8 +15,9 @@ $ npm install --save-dev broccoli-jst
 ```js
 var jst = require('broccoli-jst');
 tree = jst(tree, {
-    extensions: ['ejs'],    // optional (defaults to ['jst'])
-    namespace: 'App.JST'    // optional (defaults to 'JST')
+    extensions: ['ejs']         // optional (defaults to ['jst'])
+,   namespace: 'App.JST'        // optional (defaults to 'JST')
+,   templatesRoot: 'templates'  // optional (defaults to 'templates')
 });
 ```
 
