@@ -1,6 +1,6 @@
 {
   "name": "broccoli-jst",
-  "description": "Generic template filter for Broccoli",
+  "description": "JST template filter for Broccoli",
   "version": "0.1.0",
   "author": "Sukjoon Kim <sjoonk@gmail.com>",
   "main": "index.js",

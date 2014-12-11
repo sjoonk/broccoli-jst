@@ -10,20 +10,15 @@ $ npm install --save-dev broccoli-jst
 ```
 
 
-## Usage
+## Example
 
 ```js
 var jst = require('broccoli-jst');
-tree = jst(tree, options);
+tree = jst(tree, {
+    extensions: ['ejs'],    // optional (defaults to ['jst'])
+    namespace: 'App.JST'    // optional (defaults to 'JST')
+});
 ```
-
-
-## API
-
-### jst(tree, options)
-
-#### options
-
 
 
 ## License
