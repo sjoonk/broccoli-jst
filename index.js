@@ -34,5 +34,15 @@ JSTFilter.prototype.processString = function(string, relativePath) {
     var filename = relativePath.split(templateDir).reverse()[0].replace(extensionRegex, '');
     var compiled = _.template(string);
 
-    return this.namespace + "['" + filename + "'] = " + compiled.source + ";\n";
+    var result = [];
+    result.push(compiled.source + ";\n")
+
+    if (this.namespace !== false) {
+        var namespaceString = "this['" + this.namespace + "']"
+
+        result.unshift(namespaceString + "['" + filename + "'] = ");
+        result.unshift(namespaceString + " = " + namespaceString + " || {};\n");
+    }
+
+    return result.join("");
 };
