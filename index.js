@@ -6,7 +6,9 @@ var _ = require('lodash');
 DEFAULTS = {
     extensions: ['jst'],  
     namespace: 'JST',
-    templatesRoot: 'templates'
+    templatesRoot: 'templates',
+    templateSettings: {},
+    amd: false
 };
 
 module.exports = JSTFilter;
@@ -24,6 +26,8 @@ function JSTFilter(inputTree, options) {
   this.extensions = options.extensions || DEFAULTS.extensions;
   this.namespace = options.namespace || DEFAULTS.namespace;
   this.templatesRoot = options.templatesRoot || DEFAULTS.templatesRoot;
+  this.templateSettings = options.templateSettings || DEFAULTS.templateSettings;
+  this.amd = options.amd || DEFAULTS.amd;
   // this.compileFunction = options.compileFunction || '';
 }
 
@@ -32,7 +36,31 @@ JSTFilter.prototype.processString = function(string, relativePath) {
     // var filename = relativePath.replace(extensionRegex, '');
     var templateDir = path.normalize(this.templatesRoot + path.sep); 
     var filename = relativePath.split(templateDir).reverse()[0].replace(extensionRegex, '');
-    var compiled = _.template(string);
+    var compiled = _.template(string, false, this.templateSettings);
 
-    return this.namespace + "['" + filename + "'] = " + compiled.source + ";\n";
+    var result = [];
+    result.push(compiled.source + ";\n")
+
+    var namespaceString = null;
+    var namespaceTemplateString = null;
+    if (this.namespace !== false) {
+      namespaceString = "this['" + this.namespace + "']";
+      namespaceTemplateString = namespaceString + "['" + filename + "']";
+  
+      result.unshift(namespaceTemplateString + " = ");
+      result.unshift(namespaceString + " = " + namespaceString + " || {};\n");
+    }
+
+    if (this.amd) {
+      if (this.namespace === false) {
+        result.unshift("return ");
+      }
+      result.unshift("define(function(){\n");
+      if (this.namespace !== false) {
+        result.push("return " + namespaceTemplateString + ";\n");
+      }
+      result.push("});");
+    }
+
+    return result.join("");
 };
