@@ -7,7 +7,8 @@ DEFAULTS = {
     extensions: ['jst'],  
     namespace: 'JST',
     templatesRoot: 'templates',
-    templateSettings: {}
+    templateSettings: {},
+    amd: false
 };
 
 module.exports = JSTFilter;
@@ -26,6 +27,7 @@ function JSTFilter(inputTree, options) {
   this.namespace = options.namespace || DEFAULTS.namespace;
   this.templatesRoot = options.templatesRoot || DEFAULTS.templatesRoot;
   this.templateSettings = options.templateSettings || DEFAULTS.templateSettings;
+  this.amd = options.amd || DEFAULTS.amd;
   // this.compileFunction = options.compileFunction || '';
 }
 
@@ -39,11 +41,25 @@ JSTFilter.prototype.processString = function(string, relativePath) {
     var result = [];
     result.push(compiled.source + ";\n")
 
+    var namespaceString = null;
+    var namespaceTemplateString = null;
     if (this.namespace !== false) {
-        var namespaceString = "this['" + this.namespace + "']"
+      namespaceString = "this['" + this.namespace + "']";
+      namespaceTemplateString = namespaceString + "['" + filename + "']";
+  
+      result.unshift(namespaceTemplateString + " = ");
+      result.unshift(namespaceString + " = " + namespaceString + " || {};\n");
+    }
 
-        result.unshift(namespaceString + "['" + filename + "'] = ");
-        result.unshift(namespaceString + " = " + namespaceString + " || {};\n");
+    if (this.amd) {
+      if (this.namespace === false) {
+        result.unshift("return ");
+      }
+      result.unshift("define(function(){\n");
+      if (this.namespace !== false) {
+        result.push("return " + namespaceTemplateString + ";\n");
+      }
+      result.push("});");
     }
 
     return result.join("");
