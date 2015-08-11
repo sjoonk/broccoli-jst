@@ -18,6 +18,8 @@ tree = jst(tree, {
     extensions: ['ejs']         // optional (defaults to ['jst'])
 ,   namespace: 'App.JST'        // optional (defaults to 'JST')
 ,   templatesRoot: 'templates'  // optional (defaults to 'templates')
+,   templateSettings: {}        // optional
+,   amd: true                   // optional (defaults to 'false')
 });
 ```
 
