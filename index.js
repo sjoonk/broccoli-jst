@@ -1,10 +1,10 @@
 var path = require('path');
-var Filter = require('broccoli-filter');
+var Filter = require('broccoli-persistent-filter');
 var jsStringEscape = require('js-string-escape');
 var _ = require('lodash');
 
 DEFAULTS = {
-    extensions: ['jst'],  
+    extensions: ['jst'],
     namespace: 'JST',
     templatesRoot: 'templates',
     templateSettings: {},
@@ -21,6 +21,7 @@ JSTFilter.prototype.targetExtension = 'js';
 
 function JSTFilter(inputTree, options) {
   if (!(this instanceof JSTFilter)) return new JSTFilter(inputTree, options);
+  Filter.call(this, inputTree, options);
   this.inputTree = inputTree;
   this.options = options || {};
   this.extensions = options.extensions || DEFAULTS.extensions;
@@ -32,9 +33,9 @@ function JSTFilter(inputTree, options) {
 }
 
 JSTFilter.prototype.processString = function(string, relativePath) {
-    var extensionRegex = /\.[0-9a-z]+$/i;
+    var extensionRegex = /\.[0-9a-z\.]+$/i;
     // var filename = relativePath.replace(extensionRegex, '');
-    var templateDir = path.normalize(this.templatesRoot + path.sep); 
+    var templateDir = path.normalize(this.templatesRoot + path.sep);
     var filename = relativePath.split(templateDir).reverse()[0].replace(extensionRegex, '');
     var compiled = _.template(string, false, this.templateSettings);
 
@@ -46,7 +47,7 @@ JSTFilter.prototype.processString = function(string, relativePath) {
     if (this.namespace !== false) {
       namespaceString = "this['" + this.namespace + "']";
       namespaceTemplateString = namespaceString + "['" + filename + "']";
-  
+
       result.unshift(namespaceTemplateString + " = ");
       result.unshift(namespaceString + " = " + namespaceString + " || {};\n");
     }
